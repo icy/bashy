@@ -1,4 +1,4 @@
-## HsabyMhO - OhMyBash
+## hsaByMhO - OhMyBash
 
 Do you know why? It's because
 
