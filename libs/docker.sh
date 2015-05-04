@@ -3,6 +3,7 @@
 # Purpose: Docker utils
 # Author : Anh K. Huynh
 # Date   : 2015 May 04th
+# Ref.   : Feature request at https://github.com/docker/docker/issues/12791
 
 # Return IP address of a docker container
 # Input : $1: Docker container ID / name
