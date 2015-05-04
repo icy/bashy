@@ -14,6 +14,7 @@
 #   touch .git/skip._.private                 # skip private branch
 #
 #   git_push_to_all_remotes : branch3 branch4 # push current branch, branch3 and branch4
+#   git_push_to_all_remotes : --force         # for a remote update
 #
 git_push_to_all_remotes() {
   local _args=
