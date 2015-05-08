@@ -15,3 +15,10 @@ url_encode() {
     }
   '
 }
+
+# Fetch all URLs from STDIN. Example
+#   curl -sL duckduckgo.com |url_fetch
+url_fetch() {
+  ruby -e 'STDIN.read.scan(%r{(https?://[a-z%0-9\-_\./]+)}i) { |m| puts m }' \
+  | sort -u
+}
