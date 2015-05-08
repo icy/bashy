@@ -15,7 +15,7 @@ docker_to_ip() {
 # Return iptables (NAT) rules for a running container
 # Input : Container ID/Name
 # Output: iptables commands
-container_to_nat() {
+docker_container_to_nat() {
   local _ip=
   local _id="${1:-xxx}"
 
@@ -45,9 +45,16 @@ container_to_nat() {
 # Return iptables (NAT) rules for all running containers
 # Input : NONE
 # Output: all iptables rules for running container
-containers_to_nat() {
+docker_containers_to_nat() {
   while read CONTAINER_ID; do
     echo >&2 ":: docker/firewall: Generating rule for $CONTAINER_ID..."
     container_to_nat $CONTAINER_ID
   done < <(docker ps -q)
+}
+
+docker_images_clean() {
+  docker rmi -f \
+    $(docker images \
+    | grep '^<none' \
+    | awk '{print $3}')
 }
