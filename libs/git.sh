@@ -60,3 +60,37 @@ git_push_to_all_remotes() {
       done
   done
 }
+
+# Use *our* verion of conflict files
+git_ours() {
+  while (( $# )); do
+    [[ -f "$1" ]] \
+      && git checkout --ours "$1" \
+      && git add "$1"
+    shift
+  done
+}
+
+# Use *their* verion of conflict files
+git_theirs() {
+  while (( $# )); do
+    [[ -f "$1" ]] \
+      && git checkout --theirs "$1" \
+      && git add "$1"
+    shift
+  done
+}
+
+# Show list of conflict files
+git_conflict() {
+  git status -s $@ \
+    | grep AA
+}
+
+# Print number of commits by user
+git_count_author() {
+  git log --pretty=format:%aN \
+  | sort \
+  | uniq -c \
+  | sort -rn
+}
