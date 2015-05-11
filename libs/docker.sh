@@ -48,7 +48,7 @@ docker_container_to_nat() {
 docker_containers_to_nat() {
   while read CONTAINER_ID; do
     echo >&2 ":: docker/firewall: Generating rule for $CONTAINER_ID..."
-    container_to_nat $CONTAINER_ID
+    docker_container_to_nat $CONTAINER_ID
   done < <(docker ps -q)
 }
 
