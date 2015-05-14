@@ -58,3 +58,22 @@ docker_images_clean() {
     | grep '^<none' \
     | awk '{print $3}')
 }
+
+# Return uptime of a container in minutes
+# $1: container id
+# If `$1` is missing, return system uptime
+# NOTE: accessing to /proc/ is required.
+docker_uptime() {
+  local _pid="1"
+
+  if [[ -n "${1:-}" ]]; then
+    _pid="$(docker inspect --format='{{.State.Pid}}' "$1" 2>/dev/null)"
+  fi
+  if [[ -z "$_pid" || "$_pid" == 0 ]]; then
+    echo 0
+    return
+  fi
+
+  ps h -oetime "$_pid" \
+  | awk '{ match($0, /([0-9]+-)?(([0-9]+):)?([0-9]+):([0-9]+)/, m); printf("%d\n", (m[1]*24 + m[3])*60 + m[4] + m[5]/60); }'
+}
