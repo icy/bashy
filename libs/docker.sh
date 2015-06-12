@@ -42,23 +42,29 @@ docker_container_to_nat() {
   _ip="$(docker_to_ip $_id)"
   [[ $? -eq 0 ]] || return $?
 
-  docker inspect \
-    --format='{{range $p, $conf := .NetworkSettings.Ports}} {{if $conf}} {{printf "%s/%s\n" (index $conf 0).HostPort $p}} {{end}} {{end}}' \
-    $_id \
-  | grep /\
+
+  # $ docker port test
+  # 80/tcp -> 127.0.1.1:1234
+  # 80/tcp -> 0.0.0.0:1235
+  docker port $_id \
+  | grep /tcp \
+  | sed -e 's#[/tcp>: -]\+# #g' \
   | awk \
-      -F/\
       -vIP=$_ip \
       -vCONTAINER_ID=$_id \
       '{
-        printf("iptables -t nat -C POSTROUTING -s %s/32 -d %s/32 -p tcp -m tcp --dport %s -j MASQUERADE 2>/dev/null \\\n", IP, IP, $2);
-        printf("|| iptables -t nat -A POSTROUTING -s %s/32 -d %s/32 -p tcp -m tcp --dport %s -j MASQUERADE\n", IP, IP, $2);
+        iport = $1
+        eip   = $2
+        eport = $3
 
-        printf("iptables -t nat -C DOCKER ! -i docker0 -p tcp -m tcp --dport %s -j DNAT --to-destination %s:%s 2>/dev/null \\\n", $1, IP, $2);
-        printf("|| iptables -t nat -A DOCKER ! -i docker0 -p tcp -m tcp --dport %s -j DNAT --to-destination %s:%s\n", $1, IP, $2);
+        printf("iptables -t nat -C POSTROUTING -s %s/32 -d %s/32 -p tcp -m tcp --dport %s -j MASQUERADE 2>/dev/null \\\n", IP, IP, iport);
+        printf("|| iptables -t nat -A POSTROUTING -s %s/32 -d %s/32 -p tcp -m tcp --dport %s -j MASQUERADE\n", IP, IP, iport);
 
-        printf("iptables -C DOCKER -d %s/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport %s -j ACCEPT 2>/dev/null \\\n", IP, $2);
-        printf("|| iptables -A DOCKER -d %s/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport %s -j ACCEPT\n", IP, $2);
+        printf("iptables -t nat -C DOCKER -d %s/32 ! -i docker0 -p tcp -m tcp --dport %s -j DNAT --to-destination %s:%s 2>/dev/null \\\n", eip, eport, IP, iport);
+        printf("|| iptables -t nat -A DOCKER -d %s/32 ! -i docker0 -p tcp -m tcp --dport %s -j DNAT --to-destination %s:%s\n", eip, eport, IP, iport);
+
+        printf("iptables -C DOCKER -d %s/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport %s -j ACCEPT 2>/dev/null \\\n", IP, iport);
+        printf("|| iptables -A DOCKER -d %s/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport %s -j ACCEPT\n", IP, iport);
       }'
 }
 
