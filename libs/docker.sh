@@ -35,6 +35,14 @@ EOF
 # Return iptables (NAT) rules for a running container
 # Input : Container ID/Name
 # Output: iptables commands
+#
+# FIXME: This script will expose a security hole. By default,
+# FIXME: Docker packets are filtered with DOCKER and we don't
+# FIXME: have any limitation on that. By using this script,
+# FIXME: the port may be accessible by the world. Please make sure
+# FIXME: to have another firewall layer. Don't use this script bindly
+# FIXME: when you are using Digital Ocean networks.
+#
 docker_container_to_nat() {
   local _ip=
   local _id="${1:-xxx}"
