@@ -111,3 +111,42 @@ docker_uptime() {
   ps h -oetime "$_pid" \
   | awk '{ match($0, /([0-9]+-)?(([0-9]+):)?([0-9]+):([0-9]+)/, m); printf("%d\n", (m[1]*24 + m[3])*60 + m[4] + m[5]/60); }'
 }
+
+# A simple fancy version of `docker ps`
+# TODO: Use Go template instead.
+docker_ps() {
+  docker ps -a \
+  | awk \
+    '{
+      if (NR>1) {
+        gsub(/.*\//, "", $2);
+
+        where = match($NF, /_.*_/);
+        if (where != 0) {
+          gsub("_", " ", $NF);
+          printf("%s %s %s ", $1, $2, $NF);
+        }
+        else {
+          printf("%s %s %s - 0 ", $1, $2, $NF);
+        }
+
+
+        for (i=1; i<NF; i++) {
+          f=$(i);
+          if (f ~ /Created/) {
+            printf("--%s", f);
+          }
+          else if (f ~ /[0-9]\/[a-z]/) {
+            gsub(/0.0.0.0:/, "", f);
+            printf("%s", f);
+          }
+          else if (f ~ /Exited/) {
+            printf("--%s", f);
+          }
+        }
+        printf("\n");
+      }
+    }' \
+  | column -t \
+  | sort -k3
+}
