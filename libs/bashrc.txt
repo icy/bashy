@@ -1,0 +1,39 @@
+#!/bin/sh
+
+export HISTSIZE=2000000
+export HISTFILESIZE=20000000000
+export HISTCONTROL="ignoredups"
+export HISTCONTROL="ignoreboth"
+export HISTTIMEFORMAT="[%DT%T] "
+export HISTIGNORE="pwd:exit:clear:fg*:bg*:history*:zplay*:me*:log*"
+
+shopt -s histappend
+shopt -s cmdhist
+shopt -s autocd
+shopt -s histreedit
+
+export PROMPT_COMMAND='history -a'
+export EDITOR="nano"
+export LANG=en_US.UTF-8
+
+export PATH=$HOME/bin:$PATH
+export PS1='\[\e[0;32m\]:: \[\e[0;37m\]You are \[\e[0;31m\]\u\[\e[0;37m\]@\[\e[0;31m\]\H\[\e[0;37m\] \[\e[0;37m\]\w\n\[\e[0;32m\]\$\[\e[0m\] '
+
+alias grep='grep --color'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+alias dmesg='dmesg -L -Tlwarn'
+alias l='ls --color=auto -F --indicator-style=classify'
+alias la='ls --color=auto -aF --indicator-style=classify'
+alias ll='ls --color=auto -lF --indicator-style=classify'
+alias lla='ls --color=auto -laF --indicator-style=classify'
+alias ls='ls --color=auto -F --indicator-style=classify'
+alias rm='rm -i'
+alias man='man -P /usr/bin/most'
+
+-() { cd -; }
+
+if [[ -f $HOME/bin/gpg-agent.sh ]]; then
+  source $HOME/bin/gpg-agent.sh
+fi
