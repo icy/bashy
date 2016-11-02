@@ -5,7 +5,7 @@ export HISTFILESIZE=20000000000
 export HISTCONTROL="ignoredups"
 export HISTCONTROL="ignoreboth"
 export HISTTIMEFORMAT="[%DT%T] "
-export HISTIGNORE="pwd:exit:clear:fg*:bg*:history*:zplay*:me*:log*"
+export HISTIGNORE="pwd:exit:clear:fg*:bg*:history*"
 
 shopt -s histappend
 shopt -s cmdhist
