@@ -37,3 +37,6 @@ alias man='man -P /usr/bin/most'
 if [[ -f $HOME/bin/gpg-agent.sh ]]; then
   source $HOME/bin/gpg-agent.sh
 fi
+if [[ -f $HOME/bin/ssh-agent.sh ]]; then
+  source $HOME/bin/ssh-agent.sh
+fi
