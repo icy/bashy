@@ -4,6 +4,46 @@
 # Author  : Ky-Anh Huynh
 # Purpose : wrapper for all k8s commands/clusters
 
+# Usage
+
+# 1. Initialize clusters' root
+#
+#   $ mkdir ~/projects/gk8s/<cluster-name>
+#   $ cd ~/projects/gk8s/<cluster-name>
+#   $ touch .k8s
+#
+# 2. Provision aws configurations
+#
+#   $ ln -s ~/.aws .aws
+#
+# 3. Provision k8s configurations
+#
+#   $ ln -s ~/.kube .kube
+#
+#   Specify the default namespace. Default to `default` ;)
+#
+#   $ echo my-default-namespace > .k8s
+#
+# 4. Optionally create an shortcut
+#
+#   $ ln -s ~/projects/gk8s/<cluster-name> ~/bin/gk8s-<cluster-name>
+#
+# 5. Invoke the command
+#
+#   $ gk8s get pods      # on the default namespace,
+#                        # on namespace specified in `.k8s`
+#   $ gk8s get pods @%   # on all namespaces
+#
+#   You can move around and execute your alias command instead
+#
+#   $ cd /my/parent/home
+#   $ gk8s-<cluster-name> get pods
+#
+#
+#  `kubectl` is injected when you are not specifed them as your first
+#  argument. E.g, `gk8s get pods` is the same as `gk8s kubectl get pods`.
+#
+
 _basename="${0##*/}"
 case "$_basename" in
 "gk8s" )
