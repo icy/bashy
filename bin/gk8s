@@ -71,8 +71,6 @@ fi
 
 _help() {
   echo >&2 ":: Please specify a command."
-  echo >&2 ":: OHOME: $OHOME"
-  echo >&2 ":: NHOME: $HOME"
 }
 
 if [[ "$#" -eq 0 ]]; then
@@ -110,14 +108,14 @@ while [[ "$_start" -le "${#_oargs}" ]]; do
 done
 
 set -- "${_oargs[@]}"
+export OHOME="$HOME"
+export HOME="$(pwd)"
 
 # Print heading...
 echo >&2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
 echo >&2 ":: WDir: $(pwd)"
 echo >&2 ":: Command: $@"
+echo >&2 ":: OHOME: $OHOME"
+echo >&2 ":: NHOME: $HOME"
 
-{
-  export OHOME="$HOME"
-  export HOME="$(pwd)"
-  "${@}"
-}
+"${@}"
