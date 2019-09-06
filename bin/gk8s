@@ -94,9 +94,15 @@ case "${1:-}" in
 esac
 
 # Insert the namespace configuration...
-_cmd1="$1"; shift;
-_cmd2="$1"; shift;
-set -- "$_cmd1" "$_cmd2" $_ns "$@"
+_cmd1="$1";
+case "$_cmd1" in
+kubectl.*)
+
+  shift;
+  _cmd2="$1"; shift;
+  set -- "$_cmd1" "$_cmd2" $_ns "$@"
+  ;;
+esac
 
 _oargs=( "$@" )
 _start=0
