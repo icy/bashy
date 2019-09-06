@@ -40,3 +40,7 @@ fi
 if [[ -f $HOME/bin/ssh-agent.sh ]]; then
   source $HOME/bin/ssh-agent.sh
 fi
+
+if [[ -S "/run/user/$(id -u)/keyring/ssh" ]]; then
+  export SSH_AUTH_SOCK="/run/user/$(id -u)/keyring/ssh"
+fi
