@@ -4,8 +4,15 @@
 # Author  : Ky-Anh Huynh
 # Purpose : wrapper for all k8s commands/clusters
 
+# Ideas
+#
+#   1. Hook up $HOME variable
+#   2. Explicitly avoid kind of human mistakes when dealing with
+#       multiple clusters and namespaces
+#   3. To use with/by non-human scripts ;)
+#
 # Usage
-
+#
 # 1. Initialize clusters' root
 #
 #   $ mkdir ~/projects/gk8s/<cluster-name>
