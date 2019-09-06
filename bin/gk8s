@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+# Date    : 2019-09-06
+# Author  : Ky-Anh Huynh
+# Purpose : wrapper for all k8s commands/clusters
+
+_basename="${0##*/}"
+case "$_basename" in
+"gk8s" )
+  _CLUSTER="$(pwd)"
+  _CLUSTER="${_CLUSTER##*/}"
+  ;;
+
+"gk8s-"*)
+  _CLUSTER="${_basename#*-}"
+  cd "$HOME/projects/gk8s/$_CLUSTER" || exit
+  ;;
+esac
+
+if [[ ! -f ".k8s" ]]; then
+  echo >&2 "... Missing .k8s file. Giving up."
+  exit 1
+fi
+
+_help() {
+  echo >&2 ":: Please specify a command."
+  echo >&2 ":: OHOME: $OHOME"
+  echo >&2 ":: NHOME: $HOME"
+}
+
+if [[ "$#" -eq 0 ]]; then
+  set -- _help
+fi
+
+# Getting namespace from the file .k8s
+_ns="$(head -1 .k8s)"
+if [[ -z "$_ns" ]]; then
+  _ns="--namespace default"
+else
+  _ns="--namespace $_ns"
+fi
+
+case "${1:-}" in
+"kubectl"*|"helm"*|_help)
+  ;;
+*)
+  set -- kubectl "$@"
+  ;;
+esac
+
+# Insert the namespace configuration...
+_cmd1="$1"; shift;
+_cmd2="$1"; shift;
+set -- "$_cmd1" "$_cmd2" $_ns "$@"
+
+_oargs=( "$@" )
+_start=0
+while [[ "$_start" -le "${#_oargs}" ]]; do
+  if [[ "${_oargs[$_start]}" == "@%" ]]; then
+    _oargs["$_start"]="--all-namespaces"
+  fi
+  (( _start ++ ))
+done
+
+set -- "${_oargs[@]}"
+
+# Print heading...
+echo >&2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
+echo >&2 ":: WDir: $(pwd)"
+echo >&2 ":: Command: $@"
+
+{
+  export OHOME="$HOME"
+  export HOME="$(pwd)"
+  "${@}"
+}
