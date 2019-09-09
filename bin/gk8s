@@ -51,6 +51,11 @@
 #  argument. E.g, `gk8s get pods` is the same as `gk8s kubectl get pods`.
 #
 
+_log2() {
+  [[ "${VERBOSE:-0}" -ge 2 ]] || return 0
+  echo >&2 ":: ${*}"
+}
+
 _basename="${0##*/}"
 case "$_basename" in
 "gk8s" )
@@ -88,6 +93,9 @@ fi
 case "${1:-}" in
 "kubectl"*|"helm"*|_help)
   ;;
+"--")
+  shift;
+  ;;
 *)
   set -- kubectl "$@"
   ;;
@@ -118,10 +126,10 @@ export OHOME="$HOME"
 export HOME="$(pwd)"
 
 # Print heading...
-echo >&2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
-echo >&2 ":: WDir: $(pwd)"
-echo >&2 ":: Command: $@"
-echo >&2 ":: OHOME: $OHOME"
-echo >&2 ":: NHOME: $HOME"
+_log2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
+_log2 ":: WDir: $(pwd)"
+_log2 ":: Command: $@"
+_log2 ":: OHOME: $OHOME"
+_log2 ":: NHOME: $HOME"
 
 "${@}"
