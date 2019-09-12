@@ -70,7 +70,7 @@ case "$_basename" in
 esac
 
 if [[ ! -f ".k8s" ]]; then
-  echo >&2 "... Missing .k8s file. Giving up."
+  echo >&2 "... Missing .k8s file in working directory ($(pwd)). Giving up."
   exit 1
 fi
 
@@ -132,4 +132,13 @@ _log2 ":: Command: $@"
 _log2 ":: OHOME: $OHOME"
 _log2 ":: NHOME: $HOME"
 
+if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
+  if [[ ! -f ".delete" ]]; then
+    echo >&2 ":: Action delete was requested but confirmation file (.delete) not found"
+    echo >&2 ":: Working directory: $(pwd)"
+    exit 127
+  fi
+  _log2 ":: Removing confirmation file: $(pwd)/.delete"
+  rm -fv .delete
+fi
 "${@}"
