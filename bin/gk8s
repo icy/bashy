@@ -137,4 +137,5 @@ if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
   _log2 ":: Removing confirmation file: $(pwd)/.delete"
   rm -fv .delete
 fi
+[[ "${VERBOSE:-0}" -ge 2 ]] && set -x
 "${@}"
