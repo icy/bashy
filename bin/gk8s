@@ -17,7 +17,7 @@
 #
 #   $ mkdir ~/projects/gk8s/<cluster-name>
 #   $ cd ~/projects/gk8s/<cluster-name>
-#   $ touch .k8s
+#   $ touch .gk8s
 #
 # 2. Provision aws configurations
 #
@@ -29,7 +29,7 @@
 #
 #   Specify the default namespace. Default to `default` ;)
 #
-#   $ echo my-default-namespace > .k8s
+#   $ echo my-default-namespace > .gk8s
 #
 # 4. Optionally create an shortcut
 #
@@ -38,7 +38,7 @@
 # 5. Invoke the command
 #
 #   $ gk8s get pods      # on the default namespace,
-#                        # on namespace specified in `.k8s`
+#                        # on namespace specified in `.gk8s`
 #   $ gk8s get pods @%   # on all namespaces
 #
 #   You can move around and execute your alias command instead
@@ -69,8 +69,8 @@ case "$_basename" in
   ;;
 esac
 
-if [[ ! -f ".k8s" ]]; then
-  echo >&2 "... Missing .k8s file in working directory ($(pwd)). Giving up."
+if [[ ! -f ".gk8s" ]]; then
+  echo >&2 "... Missing .gk8s file in working directory ($(pwd)). Giving up."
   exit 1
 fi
 
@@ -82,13 +82,9 @@ if [[ "$#" -eq 0 ]]; then
   set -- _help
 fi
 
-# Getting namespace from the file .k8s
-_ns="$(head -1 .k8s)"
-if [[ -z "$_ns" ]]; then
-  _ns="--namespace default"
-else
-  _ns="--namespace $_ns"
-fi
+# Getting namespace from the file .gk8s
+source .gk8s || true
+_ns="--namespace ${GK8S_NAMESPACE:-default}"
 
 case "${1:-}" in
 "kubectl"*|"helm"*|_help)
