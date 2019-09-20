@@ -14,4 +14,4 @@ workflows:
   version: 2
   all_workflow:
     jobs:
-    - debugging
+    - env
