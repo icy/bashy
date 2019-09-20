@@ -83,7 +83,9 @@ if [[ "$#" -eq 0 ]]; then
 fi
 
 # Getting namespace from the file .gk8s
-source .gk8s || true
+_log2 ":: Loading configuration file .gk8s"
+source .gk8s || exit
+
 _ns="--namespace ${GK8S_NAMESPACE:-default}"
 
 case "${1:-}" in
