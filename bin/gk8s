@@ -70,7 +70,10 @@ case "$_basename" in
 esac
 
 if [[ ! -f ".gk8s" ]]; then
-  echo >&2 "... Missing .gk8s file in working directory ($(pwd)). Giving up."
+  echo >&2 "... Missing .gk8s file in working directory ($(pwd))."
+  if [[ -f ".k8s" ]]; then
+    echo >&2 ".... found .k8s file. Rename this file to .gk8s would help."
+  fi
   exit 1
 fi
 
