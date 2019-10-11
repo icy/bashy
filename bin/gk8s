@@ -60,18 +60,22 @@ _basename="${0##*/}"
 case "$_basename" in
 "gk8s" )
   _CLUSTER="$(pwd)"
+  NHOME="$(pwd -P)"
   _CLUSTER="${_CLUSTER##*/}"
   ;;
 
 "gk8s-"*)
   _CLUSTER="${_basename#*-}"
-  cd "$HOME/projects/gk8s/$_CLUSTER" || exit
+  ( cd "$HOME/projects/gk8s/$_CLUSTER/" || exit ; )
+  NHOME="$HOME/projects/gk8s/$_CLUSTER/"
   ;;
 esac
 
-if [[ ! -f ".gk8s" ]]; then
-  echo >&2 "... Missing .gk8s file in working directory ($(pwd))."
-  if [[ -f ".k8s" ]]; then
+export NHOME; readonly NHOME
+
+if [[ ! -f "$NHOME/.gk8s" ]]; then
+  echo >&2 "... Missing .gk8s file in working directory '$NHOME'."
+  if [[ -f "$NHOME/.k8s" ]]; then
     echo >&2 ".... found .k8s file. Rename this file to .gk8s would help."
   fi
   exit 1
@@ -86,8 +90,8 @@ if [[ "$#" -eq 0 ]]; then
 fi
 
 # Getting namespace from the file .gk8s
-_log2 ":: Loading configuration file .gk8s"
-source .gk8s || exit
+_log2 ":: Loading configuration file $NHOME/.gk8s"
+source "$NHOME/.gk8s" || exit
 
 _ns="--namespace ${GK8S_NAMESPACE:-default}"
 
@@ -124,7 +128,7 @@ done
 
 set -- "${_oargs[@]}"
 export OHOME="$HOME"
-export HOME="$(pwd)"
+export HOME="$NHOME"
 
 # Print heading...
 _log2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
