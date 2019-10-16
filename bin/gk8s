@@ -56,6 +56,10 @@ _log2() {
   echo >&2 ":: ${*}"
 }
 
+_help() {
+  echo >&2 ":: Please specify a command."
+}
+
 _basename="${0##*/}"
 case "$_basename" in
 "gk8s" )
@@ -80,10 +84,6 @@ if [[ ! -f "$NHOME/.gk8s" ]]; then
   fi
   exit 1
 fi
-
-_help() {
-  echo >&2 ":: Please specify a command."
-}
 
 if [[ "$#" -eq 0 ]]; then
   set -- _help
@@ -127,8 +127,14 @@ while [[ "$_start" -le "${#_oargs}" ]]; do
 done
 
 set -- "${_oargs[@]}"
-export OHOME="$HOME"
+export OHOME="$HOME"; readonly OHOME
 export HOME="$NHOME"
+export F_CONFIG="$OHOME/.config/gk8s"
+if [[ -f "$NHOME/.gk8s.cfg" ]]; then
+  export F_CONFIG="$NHOME/.gk8s.cfg"
+elif [[ ! -f "$F_CONFIG" ]]; then
+  export F_CONFIG="/dev/null"
+fi
 
 # Print heading...
 _log2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
@@ -136,6 +142,7 @@ _log2 ":: WDir: $(pwd)"
 _log2 ":: Command: $@"
 _log2 ":: OHOME: $OHOME"
 _log2 ":: NHOME: $HOME"
+_log2 ":: Cfg. : $F_CONFIG"
 
 if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
   if [[ ! -f ".delete" ]]; then
