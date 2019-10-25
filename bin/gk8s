@@ -157,6 +157,9 @@ if [[ -f "$NHOME/.gk8s.cfg" ]]; then
 elif [[ ! -f "$F_CONFIG" ]]; then
   export F_CONFIG="/dev/null"
 fi
+if [[ ! -d "$NHOME/.aws" ]]; then
+  ln -sv "$OHOME/.aws" "$NHOME/.aws"
+fi
 
 # Print heading...
 _log2 ":: Cluster   : $_CLUSTER, input namespace: $_ns"
