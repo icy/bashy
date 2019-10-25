@@ -51,6 +51,12 @@
 #  argument. E.g, `gk8s get pods` is the same as `gk8s kubectl get pods`.
 #
 
+_ver="${BASH_VERSINFO[0]}"
+if [[ "$_ver" -lt 4 ]]; then
+  echo >&2 ":: $0: Sorry, Bash >=4 is required."
+  exit 1
+fi
+
 _log2() {
   [[ "${VERBOSE:-0}" -ge 2 ]] || return 0
   echo >&2 ":: ${*}"
@@ -60,18 +66,29 @@ _help() {
   echo >&2 ":: Please specify a command."
 }
 
+GK8S_HOME="${GK8S_HOME:-$HOME/projects/gk8s}";
+export GK8S_HOME; readonly GK8S_HOME
+
 _basename="${0##*/}"
 case "$_basename" in
 "gk8s" )
-  _CLUSTER="$(pwd)"
-  NHOME="$(pwd -P)"
-  _CLUSTER="${_CLUSTER##*/}"
+  first_arg="${1:-}"
+  if [[ "${first_arg:0:1}" == ":" ]]; then
+    shift
+    _CLUSTER="${first_arg:1}"
+    ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
+    NHOME="$GK8S_HOME/$_CLUSTER/"
+  else
+    _CLUSTER="$(pwd)"
+    NHOME="$(pwd -P)"
+    _CLUSTER="${_CLUSTER##*/}"
+  fi
   ;;
 
 "gk8s-"*)
   _CLUSTER="${_basename#*-}"
-  ( cd "$HOME/projects/gk8s/$_CLUSTER/" || exit ; )
-  NHOME="$HOME/projects/gk8s/$_CLUSTER/"
+  ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
+  NHOME="$GK8S_HOME/$_CLUSTER/"
   ;;
 esac
 
@@ -137,12 +154,13 @@ elif [[ ! -f "$F_CONFIG" ]]; then
 fi
 
 # Print heading...
-_log2 ":: Cluster: $_CLUSTER, input namespace: $_ns"
-_log2 ":: WDir: $(pwd)"
-_log2 ":: Command: $@"
-_log2 ":: OHOME: $OHOME"
-_log2 ":: NHOME: $HOME"
-_log2 ":: Cfg. : $F_CONFIG"
+_log2 ":: Cluster   : $_CLUSTER, input namespace: $_ns"
+_log2 ":: WDir      : $(pwd)"
+_log2 ":: Command   : $@"
+_log2 ":: OHOME     : $OHOME"
+_log2 ":: NHOME     : $HOME"
+_log2 ":: GK8S_HOME : $GK8S_HOME"
+_log2 ":: Cfg.      : $F_CONFIG"
 
 if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
   if [[ ! -f ".delete" ]]; then
