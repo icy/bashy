@@ -136,11 +136,12 @@ esac
 # Insert the namespace configuration...
 _cmd1="$1";
 case "$_cmd1" in
-kubectl.*)
-
+kubectl|kubectl.*)
+  _log2 "Original command: '$@'"
   shift;
   _cmd2="$1"; shift;
   set -- "$_cmd1" "$_cmd2" $_ns "$@"
+  _log2 "Modified command: '$@'"
   ;;
 esac
 
