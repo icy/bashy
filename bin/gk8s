@@ -145,8 +145,13 @@ kubectl|kubectl.*)
   _log2 "Original command: '$@'"
   shift;
   _cmd2="$1"; shift;
-  set -- "$_cmd1" "$_cmd2" $_ns "$@"
-  _log2 "Modified command: '$@'"
+  case "$_cmd2" in
+  "apply"|"diff") ;;
+  *)
+    set -- "$_cmd1" "$_cmd2" $_ns "$@"
+    _log2 "Modified command: '$@'"
+    ;;
+  esac
   ;;
 esac
 
