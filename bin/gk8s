@@ -114,6 +114,11 @@ fi
 # Getting namespace from the file .gk8s
 _log2 ":: Loading configuration file $NHOME/.gk8s"
 source "$NHOME/.gk8s" || exit
+# FIXME: May be duplication...
+if [[ -f ".gk8s" ]]; then
+  _log2 ":: Loading configuration file $(pwd -P)/.gk8s"
+  source ".gk8s" || exit
+fi
 
 _ns="--namespace ${GK8S_NAMESPACE:-default}"
 
