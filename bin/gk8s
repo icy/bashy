@@ -147,6 +147,8 @@ kubectl|kubectl.*)
   _cmd2="$1"; shift;
   case "$_cmd2" in
   "apply"|"diff") ;;
+    set -- "$_cmd1" "$_cmd2" "$@"
+    ;;
   *)
     set -- "$_cmd1" "$_cmd2" $_ns "$@"
     _log2 "Modified command: '$@'"
