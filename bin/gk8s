@@ -107,6 +107,11 @@ if [[ ! -f "$NHOME/.gk8s" ]]; then
   exit 1
 fi
 
+if [[ ! -f "$NHOME/.kube/config" ]]; then
+  echo >&2 ":: kubectl config file not found: $NHOME/.kube/config"
+  exit 1
+fi
+
 if [[ "$#" -eq 0 ]]; then
   set -- _help
 fi
@@ -162,9 +167,6 @@ if [[ -f "$NHOME/.gk8s.cfg" ]]; then
   export F_CONFIG="$NHOME/.gk8s.cfg"
 elif [[ ! -f "$F_CONFIG" ]]; then
   export F_CONFIG="/dev/null"
-fi
-if [[ ! -d "$NHOME/.aws" ]]; then
-  ln -sv "$OHOME/.aws" "$NHOME/.aws"
 fi
 
 # Print heading...
