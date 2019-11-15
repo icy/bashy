@@ -24,13 +24,15 @@
 #
 #   $ ln -s ~/.aws .aws
 #
+#   If you don't do this, the script tries to create symlink automatically.
+#
 # 3. Provision k8s configurations
 #
 #   $ ln -s ~/.kube .kube
 #
 #   Specify the default namespace. Default to `default` ;)
 #
-#   $ echo my-default-namespace > .gk8s
+#   $ echo export GK8S_NAMESPACE=test-namespace > .gk8s
 #
 # 4. Optionally create an shortcut
 #
@@ -46,15 +48,16 @@
 #
 #   $ cd /my/parent/home
 #   $ gk8s-<cluster-name> get pods
-#
+#   $ gk8s :cluster-name get pods
 #
 #  `kubectl` is injected when you are not specifed them as your first
 #  argument. E.g, `gk8s get pods` is the same as `gk8s kubectl get pods`.
 #
 # Other usage
 #
-# 1. Move around the root: use GK8S_HOME instead of ~/projects/gk8s/
-# 2. Specify cluster name as `gk8s :foo` (== gk8s-foo)
+# 1. Move around the root: use `GK8S_HOME` instead of ~/projects/gk8s/.
+#    You can specify this in `~/.config/gk8s`.
+#
 
 _ver="${BASH_VERSINFO[0]}"
 if [[ "$_ver" -lt 4 ]]; then
