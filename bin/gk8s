@@ -57,6 +57,7 @@
 #
 # 1. Move around the root: use `GK8S_HOME` instead of ~/projects/gk8s/.
 #    You can specify this in `~/.config/gk8s`.
+# 2. To allow debugging, use `VERBOSE=2 gk8s <...>`
 #
 
 _ver="${BASH_VERSINFO[0]}"
