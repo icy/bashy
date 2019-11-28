@@ -129,6 +129,10 @@ if [[ -f ".gk8s" ]]; then
   source ".gk8s" || exit
 fi
 
+if [[ ! -d "$NHOME/.aws" ]]; then
+  ln -sv "$OHOME/.aws" "$NHOME/.aws"
+fi
+
 _ns="--namespace ${GK8S_NAMESPACE:-default}"
 
 case "${1:-}" in
