@@ -129,10 +129,6 @@ if [[ -f ".gk8s" ]]; then
   source ".gk8s" || exit
 fi
 
-if [[ ! -d "$NHOME/.aws" ]]; then
-  ln -sv "$OHOME/.aws" "$NHOME/.aws"
-fi
-
 _ns="--namespace ${GK8S_NAMESPACE:-default}"
 
 case "${1:-}" in
@@ -203,4 +199,7 @@ if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
   rm -fv .delete
 fi
 [[ "${VERBOSE:-0}" -ge 2 ]] && set -x
+if [[ ! -d "$NHOME/.aws" ]]; then
+  ln -sv "$OHOME/.aws" "$NHOME/.aws"
+fi
 "${@}"
