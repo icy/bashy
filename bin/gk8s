@@ -200,7 +200,7 @@ if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
 fi
 [[ "${VERBOSE:-0}" -ge 2 ]] && set -x
 # Create a symlink to ~/.aws if necessary
-if [[ ! -d "$NHOME/.aws" && -f "$OHOME/.aws" ]]; then
+if [[ ! -d "$NHOME/.aws" && -d "$OHOME/.aws" ]]; then
   ln -sv "$OHOME/.aws" "$NHOME/.aws"
 fi
 "${@}"
