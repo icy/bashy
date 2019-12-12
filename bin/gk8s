@@ -4,7 +4,10 @@
 # Author  : Ky-Anh Huynh
 # Purpose : wrapper for all k8s commands/clusters
 # Source  : https://github.com/icy/bashy/blob/master/bin/gk8s
-
+# TODOs   :
+#
+# - [ ] Should migrate to enviroment use instead?
+#
 # Ideas
 #
 #   1. Hook up $HOME variable
@@ -189,6 +192,11 @@ _log2 ":: NHOME     : $HOME"
 _log2 ":: GK8S_HOME : $GK8S_HOME"
 _log2 ":: Cfg.      : $F_CONFIG"
 
+if [[ -f "$NHOME/.gk8s.lock" ]]; then
+  echo >&2 ":: Lock find found $NHOME/.gk8s.lock. Action can not be processed."
+  exit 1
+fi
+
 if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
   if [[ ! -f ".delete" ]]; then
     echo >&2 ":: Action delete was requested but confirmation file (.delete) not found"
@@ -203,4 +211,5 @@ fi
 if [[ ! -d "$NHOME/.aws" && -d "$OHOME/.aws" ]]; then
   ln -sv "$OHOME/.aws" "$NHOME/.aws"
 fi
+
 "${@}"
