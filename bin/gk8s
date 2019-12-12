@@ -164,16 +164,6 @@ kubectl|kubectl.*)
   ;;
 esac
 
-_oargs=( "$@" )
-_start=0
-while [[ "$_start" -le "${#_oargs}" ]]; do
-  if [[ "${_oargs[$_start]}" == "@%" ]]; then
-    _oargs["$_start"]="--all-namespaces"
-  fi
-  (( _start ++ ))
-done
-
-set -- "${_oargs[@]}"
 export OHOME="$HOME"; readonly OHOME
 export HOME="$NHOME"
 export F_CONFIG="$OHOME/.config/gk8s"
@@ -182,6 +172,23 @@ if [[ -f "$NHOME/.gk8s.cfg" ]]; then
 elif [[ ! -f "$F_CONFIG" ]]; then
   export F_CONFIG="/dev/null"
 fi
+
+find_namespace() {
+  kubectl
+}
+
+_oargs=( "$@" )
+_start=0
+while [[ "$_start" -le "${#_oargs}" ]]; do
+  case "${_oargs[$_start]}" in
+  "@%")
+    _oargs["$_start"]="--all-namespaces"
+    ;;
+  esac
+  (( _start ++ ))
+done
+
+set -- "${_oargs[@]}"
 
 # Print heading...
 _log2 ":: Cluster   : $_CLUSTER, input namespace: $_ns"
@@ -193,7 +200,7 @@ _log2 ":: GK8S_HOME : $GK8S_HOME"
 _log2 ":: Cfg.      : $F_CONFIG"
 
 if [[ -f "$NHOME/.gk8s.lock" ]]; then
-  echo >&2 ":: Lock find found $NHOME/.gk8s.lock. Action can not be processed."
+  echo >&2 ":: Lock file found $NHOME/.gk8s.lock. Action can not be processed."
   exit 1
 fi
 
