@@ -8,3 +8,6 @@ set -x
 
 # Disabling the memory card reader
 echo "2-3" | sudo tee /sys/bus/usb/drivers/usb/unbind || true
+
+# Why? Who cares; it just works.
+echo N | sudo tee /sys/module/overlay/parameters/metacopy
