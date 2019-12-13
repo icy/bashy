@@ -88,8 +88,15 @@ case "$_basename" in
   if [[ "${first_arg:0:1}" == ":" ]]; then
     shift
     _CLUSTER="${first_arg:1}"
-    ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
-    NHOME="$GK8S_HOME/$_CLUSTER/"
+    if [[ -z "$_CLUSTER" ]]; then
+      # FIXME: remove duplicate code...
+      _CLUSTER="$(pwd)"
+      NHOME="$(pwd -P)"
+      _CLUSTER="${_CLUSTER##*/}"
+    else
+      ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
+      NHOME="$GK8S_HOME/$_CLUSTER/"
+    fi
   else
     _CLUSTER="$(pwd)"
     NHOME="$(pwd -P)"
