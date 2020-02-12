@@ -180,10 +180,6 @@ elif [[ ! -f "$F_CONFIG" ]]; then
   export F_CONFIG="/dev/null"
 fi
 
-find_namespace() {
-  kubectl
-}
-
 _oargs=( "$@" )
 _start=0
 while [[ "$_start" -le "${#_oargs}" ]]; do
@@ -218,12 +214,12 @@ if grep -qsEe "[[:space:]]delete[[:space:]]" <<< $* ; then
     exit 127
   fi
   _log2 ":: Removing confirmation file: $(pwd)/.delete"
-  rm -fv .delete
+  1>&2 rm -fv .delete
 fi
 [[ "${VERBOSE:-0}" -ge 2 ]] && set -x
 # Create a symlink to ~/.aws if necessary
 if [[ ! -d "$NHOME/.aws" && -d "$OHOME/.aws" ]]; then
-  ln -sv "$OHOME/.aws" "$NHOME/.aws"
+  1>&2 ln -sv "$OHOME/.aws" "$NHOME/.aws"
 fi
 
 "${@}"
