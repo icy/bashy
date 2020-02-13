@@ -33,14 +33,6 @@
 #
 #   $ ln -s ~/.kube .kube
 #
-#   Specify the default namespace. Default to `default` ;)
-#
-#   $ echo export GK8S_NAMESPACE=test-namespace > .gk8s
-#
-# 4. Optionally create an shortcut
-#
-#   $ ln -s ~/projects/gk8s/<cluster-name> ~/bin/gk8s-<cluster-name>
-#
 # 5. Invoke the command
 #
 #   $ gk8s get pods      # on the default namespace,
@@ -50,7 +42,6 @@
 #   You can move around and execute your alias command instead
 #
 #   $ cd /my/parent/home
-#   $ gk8s-<cluster-name> get pods
 #   $ gk8s :cluster-name get pods
 #
 #  `kubectl` is injected when you are not specifed them as your first
@@ -81,35 +72,25 @@ _help() {
 GK8S_HOME="${GK8S_HOME:-$HOME/projects/gk8s}";
 export GK8S_HOME; readonly GK8S_HOME
 
-_basename="${0##*/}"
-case "$_basename" in
-"gk8s" )
-  first_arg="${1:-}"
-  if [[ "${first_arg:0:1}" == ":" ]]; then
-    shift
-    _CLUSTER="${first_arg:1}"
-    if [[ -z "$_CLUSTER" ]]; then
-      # FIXME: remove duplicate code...
-      _CLUSTER="$(pwd)"
-      NHOME="$(pwd -P)"
-      _CLUSTER="${_CLUSTER##*/}"
-    else
-      ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
-      NHOME="$GK8S_HOME/$_CLUSTER/"
-    fi
-  else
+# Try to learn if the first argument is about the cluster name
+first_arg="${1:-}"
+if [[ "${first_arg:0:1}" == ":" ]]; then
+  shift
+  _CLUSTER="${first_arg:1}"
+  if [[ -z "$_CLUSTER" ]]; then
+    # FIXME: remove duplicate code...
     _CLUSTER="$(pwd)"
     NHOME="$(pwd -P)"
     _CLUSTER="${_CLUSTER##*/}"
+  else
+    ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
+    NHOME="$GK8S_HOME/$_CLUSTER/"
   fi
-  ;;
-
-"gk8s-"*)
-  _CLUSTER="${_basename#*-}"
-  ( cd "$GK8S_HOME/$_CLUSTER/" || exit ; )
-  NHOME="$GK8S_HOME/$_CLUSTER/"
-  ;;
-esac
+else
+  _CLUSTER="$(pwd)"
+  NHOME="$(pwd -P)"
+  _CLUSTER="${_CLUSTER##*/}"
+fi
 
 export NHOME; readonly NHOME
 
@@ -128,15 +109,6 @@ fi
 
 if [[ "$#" -eq 0 ]]; then
   set -- _help
-fi
-
-# Getting namespace from the file .gk8s
-_log2 ":: Loading configuration file $NHOME/.gk8s"
-source "$NHOME/.gk8s" || exit
-# FIXME: May be duplication...
-if [[ -f ".gk8s" ]]; then
-  _log2 ":: Loading configuration file $(pwd -P)/.gk8s"
-  source ".gk8s" || exit
 fi
 
 _ns="--namespace ${GK8S_NAMESPACE:-default}"
@@ -173,12 +145,6 @@ esac
 
 export OHOME="$HOME"; readonly OHOME
 export HOME="$NHOME"
-export F_CONFIG="$OHOME/.config/gk8s"
-if [[ -f "$NHOME/.gk8s.cfg" ]]; then
-  export F_CONFIG="$NHOME/.gk8s.cfg"
-elif [[ ! -f "$F_CONFIG" ]]; then
-  export F_CONFIG="/dev/null"
-fi
 
 _oargs=( "$@" )
 _start=0
@@ -200,7 +166,6 @@ _log2 ":: Command   : $@"
 _log2 ":: OHOME     : $OHOME"
 _log2 ":: NHOME     : $HOME"
 _log2 ":: GK8S_HOME : $GK8S_HOME"
-_log2 ":: Cfg.      : $F_CONFIG"
 
 if [[ -f "$NHOME/.gk8s.lock" ]]; then
   echo >&2 ":: Lock file found $NHOME/.gk8s.lock. Action can not be processed."
