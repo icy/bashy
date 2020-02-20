@@ -6,6 +6,9 @@ It can be used for educational purpose, or any purpose.
 * [gk8s](bin/gk8s): A Bash script to manage multiple k8s clusters,
   especially helpful for scripting purpose. It also helps to avoid
   accidental deletion by locking dangerous actions by default.
+
+  **WARNING**: Please use a simple version rewritten in `golang` instead:
+  https://github.com/icy/gk8s
 * [git_push_to_all_remotes](libs/git.sh): Push your code to all remotes,
   but skipping the remote you don't have permissions, and/or skip any
   protected/personal branches. And a few convenient shortcuts for `git`.
