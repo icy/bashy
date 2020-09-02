@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+cat <<'EOF'
+  This tool is deprecated.
+  Please use the Golang version of this script instead:
+     https://github.com/icy/gk8s
+EOF
+
+exit 0
+
 # Date    : 2019-09-06
 # Author  : Ky-Anh Huynh
 # Purpose : wrapper for all k8s commands/clusters
