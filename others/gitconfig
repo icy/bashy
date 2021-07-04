@@ -1,0 +1,61 @@
+[color]
+  branch = auto
+  diff = auto
+  status = auto
+
+[alias]
+  pu = push
+  pl = pull
+  ci = commit
+  di = diff --color-words
+  st = status -uno
+  stt = status
+  co = checkout
+  br = branch
+  lg = log -p
+  logf = log --follow
+  lol = log --graph --decorate --pretty=oneline --abbrev-commit
+  lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+  ls = ls-files
+  mg = merge
+  cb = rev-parse --abbrev-ref HEAD
+  clog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  slog = !git log --graph --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit | cat && echo
+
+  fp = format-patch --ignore-space-change
+
+  # TheSLinux utils
+  stag = !git tag | grep -E "^$(git rev-parse --abbrev-ref HEAD)-[0-9.]+"
+  sbr = !git branch | grep " $(git rev-parse --abbrev-ref HEAD)"
+
+[color "branch"]
+  current = white
+  local = magenta
+  remote = cyan
+
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[push]
+  default = simple
+
+[commit]
+  gpgsign = false
+
+[core]
+  quotepath = false
+  commitGraph = true
+
+[gc]
+  writeCommitGraph = true
+
+[pull]
+  ff = only
