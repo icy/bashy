@@ -89,7 +89,8 @@ git_conflict() {
 
 # Print number of commits by user
 git_count_author() {
-  git log --pretty=format:%aN \
+  TS="$(date +%s)"
+  git log --pretty=format:"%ae $TS %s" | awk -F " $TS " '{a[$0]+=1; if (a[$0]==1) {printf("%s\n", $1);}}' \
   | sort \
   | uniq -c \
   | sort -rn
