@@ -87,10 +87,22 @@ git_conflict() {
     | grep AA
 }
 
+git_count_author_year_filter() {
+  if [[ -z "${1:-}" ]]; then
+    cat
+  else
+    grep ":${1}:"
+  fi
+}
+
 # Print number of commits by user
+# $1: year number (2024, 2013) or empty
 git_count_author() {
+  year_filter="${1:-}"
   TS="$(date +%s)"
-  git log --pretty=format:"%ae $TS %s" | awk -F " $TS " '{a[$0]+=1; if (a[$0]==1) {printf("%s\n", $1);}}' \
+  git log --date="format:%Y" --pretty=format:"%ae $TS :%cd:%s" \
+  | git_count_author_year_filter "$year_filter" \
+  | awk -F " $TS " '{a[$0]+=1; if (a[$0]==1) {printf("%s\n", $1);}}' \
   | sort \
   | uniq -c \
   | sort -rn
